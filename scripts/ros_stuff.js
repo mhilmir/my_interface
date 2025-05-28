@@ -8,7 +8,7 @@ const locationPub = new ROSLIB.Topic({
 
 const gotoPub = new ROSLIB.Topic({
     ros: ros,
-    name: '/goto_location',
+    name: '/goto_status',
     messageType: 'std_msgs/Bool'
 });
 
