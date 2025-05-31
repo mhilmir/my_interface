@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Robot Web Interface</title>
   <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
   <script src="scripts/ros_stuff.js" defer></script>
   <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    /* Container for video streams */
+    .video-container {
       display: flex;
-      flex-direction: row;
+      justify-content: space-evenly;
+      margin-bottom: 20px;
+    }
+    .video-container img {
+      width: 100%;
+      border: 1px solid #000;
+      cursor: crosshair;
+    }
+
+    /* Container for controls below videos */
+    .controls-container {
+      display: flex;
       justify-content: space-between;
-      padding: 20px;
+      gap: 20px;
     }
-    .left-panel {
-      width: 45%;
-    }
-    .right-panel {
-      width: 50%;
-    }
+
+    /* Each control block takes equal width */
     .block {
       border: 1px solid #000;
       padding: 10px;
-      margin-bottom: 20px;
+      flex: 1;
     }
-    video, img {
-      width: 100%;
-      border: 1px solid #000;
-    }
+
     button {
       margin: 5px;
       padding: 10px;
@@ -38,8 +47,33 @@
     }
   </style>
 </head>
+
 <body>
-  <div class="left-panel">
+  <!-- Video streams side-by-side -->
+  <div class="video-container">
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+        <h3 style="margin: 0;">Front Camera</h3>
+        
+        <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer;">
+          <input type="checkbox" id="objectDetectionToggle" />
+          Object Detection
+        </label>
+        
+        <button id="cancelTrackingBtn" style="margin-left: 10px; padding: 5px 10px; font-size: 0.9em;">
+          Cancel Tracking
+        </button>
+      </div>
+      <img id="frontCamera" src="http://localhost:8080/stream?topic=/camera/quadruped/front_cam" alt="Front Camera Stream" />
+    </div>
+    <div>
+      <h3>Gripper Camera</h3>
+      <img id="gripperCamera" src="http://localhost:8080/stream?topic=/camera/color/image_raw" alt="Gripper Camera Stream" />
+    </div>
+  </div>
+
+  <!-- Controls below videos -->
+  <div class="controls-container">
     <div class="block">
       <h3>Choose Location</h3>
       <select id="locationDropdown">
@@ -47,7 +81,7 @@
         <option value="Ruangan_903">Ruangan TW2-903</option>
         <option value="Lift_Barat">Lift Barat</option>
         <!-- <option value="Lift Timur">Lift Timur</option> -->
-      </select><br>
+      </select><br />
       <button onclick="publishGoto(true)">Go</button>
       <button onclick="publishGoto(false)">Stop</button>
     </div>
@@ -55,30 +89,23 @@
     <div class="block">
       <h3>Current Location : <span id="currentLocation">---</span></h3>
       <button onclick="publishScan(true)">Begin Scan</button>
-      <button onclick="publishScan(false)">Stop</button><br>
-      <button onclick="publishReturn(true)">Return to Launch & Place Object</button>
+      <button onclick="publishScan(false)">Stop</button><br />
+      <button onclick="publishReturn(true)">Return to Launch &amp; Place Object</button>
       <button onclick="publishReturn(false)">Abort Return</button>
     </div>
 
     <div class="block">
-      <h3>Status Information</h3>
-      <p>Robot state: <span id="robotState">---</span></p>
-      <p>Robot battery: <span id="robotBattery">---</span></p>
-      <p>Grasp: <span id="graspStatus">---</span></p>
-      <p>Scanning: <span id="scanningStatus">---</span></p>
+      <h3>Robot State Information</h3>
+      <p>goto status: <span id="info_goto_status">---</span></p>
+      <p>location chosen: <span id="info_location_chosen">---</span></p>
+      <p>search status: <span id="info_search_status">---</span></p>
+      <p>return and place: <span id="info_return_and_place">---</span></p>
+      <p>yolo enabled: <span id="info_yolo_enabled">---</span></p>
+      <p>tracked status: <span id="info_tracked_status">---</span></p>
+      <p>tracked center: <span id="info_tracked_center">---</span></p>
+      <p>tracked depth: <span id="info_tracked_depth">---</span></p>
+      <p>cancel tracking: <span id="info_cancel_tracking">---</span></p>
     </div>
   </div>
-
-  <div class="right-panel">
-    <div>
-      <h3>Front Camera</h3>
-      <img id="frontCamera" src="/stream_front" alt="Front Camera Stream">
-    </div>
-    <div>
-      <h3>Arm Robot Camera</h3>
-      <img id="armCamera" src="/stream_arm" alt="Arm Robot Camera Stream">
-    </div>
-  </div>
-
 </body>
 </html>
