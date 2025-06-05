@@ -56,7 +56,7 @@
         <h3 style="margin: 0;">Front Camera</h3>
         
         <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer;">
-          <input type="checkbox" id="objectDetectionToggle" />
+          <input type="checkbox" id="objectDetectionToggleQuadruped" />
           Object Detection
         </label>
         
@@ -66,9 +66,24 @@
       </div>
       <img id="frontCamera" src="http://localhost:8080/stream?topic=/camera/quadruped/front_cam" alt="Front Camera Stream" />
     </div>
-    <div>
+    <!-- <div>
       <h3>Gripper Camera</h3>
       <img id="gripperCamera" src="http://localhost:8080/stream?topic=/camera/color/image_raw" alt="Gripper Camera Stream" />
+    </div> -->
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+        <h3 style="margin: 0;">Gripper Camera</h3>
+        
+        <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer;">
+          <input type="checkbox" id="objectDetectionToggleArm" />
+          Object Detection
+        </label>
+        
+        <!-- <button id="cancelTrackingBtn" style="margin-left: 10px; padding: 5px 10px; font-size: 0.9em;">
+          Cancel Tracking
+        </button> -->
+      </div>
+      <img id="gripperCamera" src="http://localhost:8080/stream?topic=/camera/arm/gripper_cam" alt="Gripper Camera Stream" />
     </div>
   </div>
 
@@ -100,7 +115,8 @@
       <p>location chosen: <span id="info_location_chosen">---</span></p>
       <p>search status: <span id="info_search_status">---</span></p>
       <p>return and place: <span id="info_return_and_place">---</span></p>
-      <p>yolo enabled: <span id="info_yolo_enabled">---</span></p>
+      <p>yolo enabled [quadruped]: <span id="info_yolo_enabled_quadruped">---</span></p>
+      <p>yolo enabled [arm]: <span id="info_yolo_enabled_arm">---</span></p>
       <p>tracked status: <span id="info_tracked_status">---</span></p>
       <p>tracked center: <span id="info_tracked_center">---</span></p>
       <p>tracked depth: <span id="info_tracked_depth">---</span></p>

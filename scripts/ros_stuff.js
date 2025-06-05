@@ -24,15 +24,27 @@ const returnNPlaceTopic = new ROSLIB.Topic({
     messageType: 'std_msgs/Bool'
 });
 
-const mouseCbTopic = new ROSLIB.Topic({
+const mouseCbTopicQuadruped = new ROSLIB.Topic({
     ros: ros,
     name: "/camera/quadruped/mouse_click",
     messageType: "geometry_msgs/Point"
 });
 
-const yoloEnabledTopic = new ROSLIB.Topic({
+const mouseCbTopicArm = new ROSLIB.Topic({
+    ros: ros,
+    name: "/camera/arm/mouse_click",
+    messageType: "geometry_msgs/Point"
+});
+
+const yoloEnabledTopicQuadruped = new ROSLIB.Topic({
   ros: ros,
-  name: '/yolo_enabled',
+  name: '/yolo_enabled_quadruped',
+  messageType: 'std_msgs/Bool'
+});
+
+const yoloEnabledTopicArm = new ROSLIB.Topic({
+  ros: ros,
+  name: '/yolo_enabled_arm',
   messageType: 'std_msgs/Bool'
 });
 
@@ -118,20 +130,55 @@ document.getElementById("frontCamera").addEventListener("click", function(event)
     const correctedX = x * scaleX;
     const correctedY = y * scaleY;
 
-    console.log("Corrected click at:", correctedX, correctedY);
+    console.log("[Quadruped] Corrected click at:", correctedX, correctedY);
 
     const point = new ROSLIB.Message({ x: correctedX, y: correctedY, z: 0 });
-    mouseCbTopic.publish(point);
+    mouseCbTopicQuadruped.publish(point);
+});
+
+document.getElementById("gripperCamera").addEventListener("click", function(event) {
+    const rect = event.target.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Dimensions of the displayed image
+    const displayWidth = rect.width;
+    const displayHeight = rect.height;
+
+    // Dimensions of the original image from the camera (actual resolution)
+    const naturalWidth = event.target.naturalWidth;
+    const naturalHeight = event.target.naturalHeight;
+
+    // Scale the click coordinates back to actual pixel positions
+    const scaleX = naturalWidth / displayWidth;
+    const scaleY = naturalHeight / displayHeight;
+
+    const correctedX = x * scaleX;
+    const correctedY = y * scaleY;
+
+    console.log("[Arm] Corrected click at:", correctedX, correctedY);
+
+    const point = new ROSLIB.Message({ x: correctedX, y: correctedY, z: 0 });
+    mouseCbTopicArm.publish(point);
 });
 
 // Publish Bool message when object detection checkbox changes
-const objectDetectionToggle = document.getElementById('objectDetectionToggle');
-objectDetectionToggle.addEventListener('change', () => {
+const objectDetectionToggleQuadruped = document.getElementById('objectDetectionToggleQuadruped');
+objectDetectionToggleQuadruped.addEventListener('change', () => {
   const msg = new ROSLIB.Message({
-    data: objectDetectionToggle.checked
+    data: objectDetectionToggleQuadruped.checked
   });
-  yoloEnabledTopic.publish(msg);
-  console.log('Published yolo_enabled:', objectDetectionToggle.checked);
+  yoloEnabledTopicQuadruped.publish(msg);
+  console.log('Published yolo_enabled_quadruped:', objectDetectionToggleQuadruped.checked);
+});
+
+const objectDetectionToggleArm = document.getElementById('objectDetectionToggleArm');
+objectDetectionToggleArm.addEventListener('change', () => {
+  const msg = new ROSLIB.Message({
+    data: objectDetectionToggleArm.checked
+  });
+  yoloEnabledTopicArm.publish(msg);
+  console.log('Published yolo_enabled_arm:', objectDetectionToggleArm.checked);
 });
 
 // Publish Empty message when cancel tracking button clicked
@@ -147,7 +194,8 @@ gotoStatusTopic.subscribe(msg => document.getElementById('info_goto_status').inn
 locationChosenTopic.subscribe(msg => document.getElementById('info_location_chosen').innerText = msg.data);
 searchStatusTopic.subscribe(msg => document.getElementById('info_search_status').innerText = msg.data);
 returnNPlaceTopic.subscribe(msg => document.getElementById('info_return_and_place').innerText = msg.data);
-yoloEnabledTopic.subscribe(msg => document.getElementById('info_yolo_enabled').innerText = msg.data);
+yoloEnabledTopicQuadruped.subscribe(msg => document.getElementById('info_yolo_enabled_quadruped').innerText = msg.data);
+yoloEnabledTopicArm.subscribe(msg => document.getElementById('info_yolo_enabled_arm').innerText = msg.data);
 trackedStatusTopic.subscribe(msg => document.getElementById('info_tracked_status').innerText = msg.data);
 trackedCenterTopic.subscribe(msg => document.getElementById('info_tracked_center').innerText = msg.data);
 trackedDepthTopic.subscribe(msg => document.getElementById('info_tracked_depth').innerText = msg.data);
