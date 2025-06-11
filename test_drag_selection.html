@@ -1,0 +1,84 @@
+<canvas id="gripperCamera" src="http://localhost:8080/stream?topic=/camera/arm/gripper_cam" alt="Gripper Camera Stream" ></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+<script>
+let canvas = document.getElementById("gripperCamera");
+let ctx = canvas.getContext("2d");
+
+// ROS connection
+let ros = new ROSLIB.Ros({
+  url: "ws://localhost:9090"  // Make sure rosbridge_websocket is running here
+});
+
+ros.on("connection", function () {
+  console.log("Connected to rosbridge.");
+});
+
+ros.on("error", function (error) {
+  console.error("Error connecting to rosbridge: ", error);
+});
+
+ros.on("close", function () {
+  console.log("Connection to rosbridge closed.");
+});
+
+// Create the topic
+// let bboxTopic = new ROSLIB.Topic({
+//   ros: ros,
+//   name: "/bounding_box",
+//   messageType: "your_package/BoundingBox"  // Use std_msgs/Int32MultiArray if not using a custom msg
+// });
+let bboxTopic = new ROSLIB.Topic({
+  ros: ros,
+  name: "/bounding_box_array",
+  messageType: "std_msgs/Int32MultiArray"
+});
+
+// Drawing logic
+let isDragging = false;
+let startX, startY;
+let currentX, currentY;
+
+canvas.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  const rect = canvas.getBoundingClientRect();
+  startX = e.clientX - rect.left;
+  startY = e.clientY - rect.top;
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  const rect = canvas.getBoundingClientRect();
+  currentX = e.clientX - rect.left;
+  currentY = e.clientY - rect.top;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "red";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(startX, startY, currentX - startX, currentY - startY);
+});
+
+canvas.addEventListener("mouseup", () => {
+  if (!isDragging) return;
+  isDragging = false;
+
+  const x = Math.min(startX, currentX);
+  const y = Math.min(startY, currentY);
+  const w = Math.abs(currentX - startX);
+  const h = Math.abs(currentY - startY);
+
+  // Publish bounding box to ROS topic
+//   let bboxMsg = new ROSLIB.Message({
+//     x: Math.round(x),
+//     y: Math.round(y),
+//     width: Math.round(w),
+//     height: Math.round(h)
+//   });
+
+    let bboxMsg = new ROSLIB.Message({
+    data: [Math.round(x), Math.round(y), Math.round(w), Math.round(h)]
+    });
+
+  bboxTopic.publish(bboxMsg);
+});
+</script>
