@@ -18,11 +18,11 @@ const searchStatusTopic = new ROSLIB.Topic({
     messageType: 'std_msgs/Bool'
 });
 
-const returnNPlaceTopic = new ROSLIB.Topic({
-    ros: ros,
-    name: '/return_and_place',
-    messageType: 'std_msgs/Bool'
-});
+// const returnNPlaceTopic = new ROSLIB.Topic({
+//     ros: ros,
+//     name: '/return_and_place',
+//     messageType: 'std_msgs/Bool'
+// });
 
 const mouseCbTopicQuadruped = new ROSLIB.Topic({
     ros: ros,
@@ -74,29 +74,45 @@ const trackedDepthTopic = new ROSLIB.Topic({
 
 // State variables
 let currentLocation = document.getElementById("locationDropdown").value;
-let gotoStatus = false;
+// let gotoStatus = false;
 let scanStatus = false;
-let returnStatus = false;
+// let returnStatus = false;
+let gotoPublishTrueOnce = false; // Flag to indicate if true should be published
+
+// Button function
+function publishGoto() {
+  // console.log("function called");
+  gotoPublishTrueOnce = true; // Set the flag to true when the button is clicked
+}
 
 // Button functions
-function publishGoto(status) {
-  gotoStatus = status;
-}
+// function publishGoto(status) {
+//   gotoStatus = status;
+// }
 
 function publishScan(status) {
   scanStatus = status;
 }
 
-function publishReturn(status) {
-  returnStatus = status;
-}
+// function publishReturn(status) {
+//   returnStatus = status;
+// }
 
 // Intervals
 setInterval(() => {
   locationChosenTopic.publish(new ROSLIB.Message({ data: currentLocation }));
-  gotoStatusTopic.publish(new ROSLIB.Message({ data: gotoStatus }));
+  // gotoStatusTopic.publish(new ROSLIB.Message({ data: gotoStatus }));
   searchStatusTopic.publish(new ROSLIB.Message({ data: scanStatus }));
-  returnNPlaceTopic.publish(new ROSLIB.Message({ data: returnStatus }));
+  // returnNPlaceTopic.publish(new ROSLIB.Message({ data: returnStatus }));
+
+  if (gotoPublishTrueOnce) {
+    gotoStatusTopic.publish(new ROSLIB.Message({ data: true }));
+    // console.log("pub true");
+    gotoPublishTrueOnce = false; // Reset the flag after publishing true once
+  } else {
+    // console.log("pub false");
+    gotoStatusTopic.publish(new ROSLIB.Message({ data: false }));
+  }
 }, 500); // publish every second
 
 // Update currentLocation when dropdown changes
@@ -193,7 +209,7 @@ cancelTrackingBtn.addEventListener('click', () => {
 gotoStatusTopic.subscribe(msg => document.getElementById('info_goto_status').innerText = msg.data);
 locationChosenTopic.subscribe(msg => document.getElementById('info_location_chosen').innerText = msg.data);
 searchStatusTopic.subscribe(msg => document.getElementById('info_search_status').innerText = msg.data);
-returnNPlaceTopic.subscribe(msg => document.getElementById('info_return_and_place').innerText = msg.data);
+// returnNPlaceTopic.subscribe(msg => document.getElementById('info_return_and_place').innerText = msg.data);
 yoloEnabledTopicQuadruped.subscribe(msg => document.getElementById('info_yolo_enabled_quadruped').innerText = msg.data);
 yoloEnabledTopicArm.subscribe(msg => document.getElementById('info_yolo_enabled_arm').innerText = msg.data);
 trackedStatusTopic.subscribe(msg => document.getElementById('info_tracked_status').innerText = msg.data);
