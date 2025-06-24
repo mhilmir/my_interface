@@ -78,6 +78,18 @@ const dragBboxTopicArm = new ROSLIB.Topic({
   messageType: 'geometry_msgs/PolygonStamped'
 });
 
+const navStatusTopic = new ROSLIB.Topic({
+    ros: ros,
+    name: '/nav_status',
+    messageType: 'std_msgs/String'
+});
+
+const manStatusTopic = new ROSLIB.Topic({
+    ros: ros,
+    name: '/man_status',
+    messageType: 'std_msgs/String'
+});
+
 // State variables
 let currentLocation = document.getElementById("locationDropdown").value;
 let scanStatus = false;
@@ -464,3 +476,7 @@ trackedCenterTopic.subscribe(msg => document.getElementById('info_tracked_center
 trackedCenterTopic.subscribe(msg => document.getElementById('info_tracked_center_y').innerText = msg.y);
 trackedDepthTopic.subscribe(msg => document.getElementById('info_tracked_depth').innerText = msg.data);
 // cancelTrackingTopic.subscribe(msg => document.getElementById('info_cancel_tracking').innerText = msg.data);
+
+// Navigation & Manipulation Status
+navStatusTopic.subscribe(msg => document.getElementById('info_nav_status').innerText = msg.data);
+manStatusTopic.subscribe(msg => document.getElementById('info_man_status').innerText = msg.data);
