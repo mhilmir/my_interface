@@ -460,6 +460,7 @@ searchStatusTopic.subscribe(msg => document.getElementById('info_search_status')
 yoloEnabledTopicQuadruped.subscribe(msg => document.getElementById('info_yolo_enabled_quadruped').innerText = msg.data);
 yoloEnabledTopicArm.subscribe(msg => document.getElementById('info_yolo_enabled_arm').innerText = msg.data);
 trackedStatusTopic.subscribe(msg => document.getElementById('info_tracked_status').innerText = msg.data);
-trackedCenterTopic.subscribe(msg => document.getElementById('info_tracked_center').innerText = msg.data);
+trackedCenterTopic.subscribe(msg => document.getElementById('info_tracked_center_x').innerText = msg.x);
+trackedCenterTopic.subscribe(msg => document.getElementById('info_tracked_center_y').innerText = msg.y);
 trackedDepthTopic.subscribe(msg => document.getElementById('info_tracked_depth').innerText = msg.data);
-cancelTrackingTopic.subscribe(msg => document.getElementById('info_cancel_tracking').innerText = msg.data);
+// cancelTrackingTopic.subscribe(msg => document.getElementById('info_cancel_tracking').innerText = msg.data);
