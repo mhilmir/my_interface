@@ -92,7 +92,7 @@ const manStatusTopic = new ROSLIB.Topic({
 
 // State variables
 let currentLocation = document.getElementById("locationDropdown").value;
-let scanStatus = false;
+let scanStatus = true;
 let gotoPublishTrueOnce = false; // Flag to indicate if true should be published
 
 // Button function
