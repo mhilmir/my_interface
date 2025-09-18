@@ -100,9 +100,12 @@ function publishGoto() {
   gotoPublishTrueOnce = true; // Set the flag to true when the button is clicked
 }
 
-function publishScan(status) {
-  scanStatus = status;
+function publishScan() {
+  scanStatus = !scanStatus;
 }
+// function publishScan(status) {
+//   scanStatus = status;
+// }
 
 // Intervals
 setInterval(() => {
@@ -127,58 +130,6 @@ const currentLocationSpan = document.getElementById("currentLocation");
 locationChosenTopic.subscribe((msg) => {
     currentLocationSpan.innerText = msg.data;
 });
-
-// document.getElementById("frontCamera").addEventListener("click", function(event) {
-//     const rect = event.target.getBoundingClientRect();
-//     const x = event.clientX - rect.left;
-//     const y = event.clientY - rect.top;
-
-//     // Dimensions of the displayed image
-//     const displayWidth = rect.width;
-//     const displayHeight = rect.height;
-
-//     // Dimensions of the original image from the camera (actual resolution)
-//     const naturalWidth = event.target.naturalWidth;
-//     const naturalHeight = event.target.naturalHeight;
-
-//     // Scale the click coordinates back to actual pixel positions
-//     const scaleX = naturalWidth / displayWidth;
-//     const scaleY = naturalHeight / displayHeight;
-
-//     const correctedX = x * scaleX;
-//     const correctedY = y * scaleY;
-
-//     console.log("[Quadruped] Corrected click at:", correctedX, correctedY);
-
-//     const point = new ROSLIB.Message({ x: correctedX, y: correctedY, z: 0 });
-//     mouseCbTopicQuadruped.publish(point);
-// });
-
-// document.getElementById("gripperCamera").addEventListener("click", function(event) {
-//     const rect = event.target.getBoundingClientRect();
-//     const x = event.clientX - rect.left;
-//     const y = event.clientY - rect.top;
-
-//     // Dimensions of the displayed image
-//     const displayWidth = rect.width;
-//     const displayHeight = rect.height;
-
-//     // Dimensions of the original image from the camera (actual resolution)
-//     const naturalWidth = event.target.naturalWidth;
-//     const naturalHeight = event.target.naturalHeight;
-
-//     // Scale the click coordinates back to actual pixel positions
-//     const scaleX = naturalWidth / displayWidth;
-//     const scaleY = naturalHeight / displayHeight;
-
-//     const correctedX = x * scaleX;
-//     const correctedY = y * scaleY;
-
-//     console.log("[Arm] Corrected click at:", correctedX, correctedY);
-
-//     const point = new ROSLIB.Message({ x: correctedX, y: correctedY, z: 0 });
-//     mouseCbTopicArm.publish(point);
-// });
 
 // Publish Bool message when object detection checkbox changes
 const objectDetectionToggleQuadruped = document.getElementById('objectDetectionToggleQuadruped');
