@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Robot Web Interface</title>
+  <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+  <script src="scripts/ros_stuff.js" defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    /* Container for video streams */
+    .video-container {
+      display: flex;
+      justify-content: space-evenly;
+      margin-bottom: 20px;
+    }
+    .video-container img {
+      width: 100%;
+      border: 1px solid #000;
+      cursor: crosshair;
+    }
+
+    /* Container for controls below videos */
+    .controls-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    /* Each control block takes equal width */
+    .block {
+      border: 1px solid #000;
+      padding: 10px;
+      flex: 1;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px;
+    }
+    select {
+      margin: 5px;
+      padding: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Video streams side-by-side -->
+  <div class="video-container">
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+        <h3 style="margin: 0;">Front Camera</h3>
+        
+        <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer;">
+          <input type="checkbox" id="objectDetectionToggleQuadruped" />
+          Object Detection
+        </label>
+        
+        <button id="cancelTrackingBtn" style="margin-left: 10px; padding: 5px 10px; font-size: 0.9em;">
+          Cancel Tracking
+        </button>
+      </div>
+      <!-- <img id="frontCamera" src="http://localhost:8080/stream?topic=/camera/quadruped/front_cam" alt="Front Camera Stream" /> -->
+      <div style="position: relative;">
+        <img id="frontCamera" src="http://localhost:8080/stream?topic=/camera/quadruped/front_cam" alt="Front Camera Stream" />
+        <canvas id="frontCamCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+      </div>
+      <p>Navigation Status: <span id="info_nav_status">---</span></p>
+    </div>
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+        <h3 style="margin: 0;">Gripper Camera</h3>
+        
+        <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer;">
+          <input type="checkbox" id="objectDetectionToggleArm" />
+          Object Detection
+        </label>
+      </div>
+      <!-- <img id="gripperCamera" src="http://localhost:8080/stream?topic=/camera/arm/gripper_cam" alt="Gripper Camera Stream" /> -->
+      <div style="position: relative;">
+        <img id="gripperCamera" src="http://localhost:8080/stream?topic=/camera/arm/gripper_cam" alt="Gripper Camera Stream" />
+        <canvas id="gripperCamCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+      </div>
+      <p>Manipulation status: <span id="info_man_status">---</span></p>
+    </div>
+  </div>
+
+  <!-- Controls below videos -->
+  <div class="controls-container">
+    <div class="block">
+      <h3>Choose Location</h3>
+      <select id="locationDropdown">
+        <option value="Room_901">Room 901</option>
+        <option value="Room_903">Room 903</option>
+        <option value="Pantry">Pantry</option>
+        <option value="Toilet">Toilet</option>
+        <option value="East_Escalator">East Escalator</option>
+        <option value="West_Escalator">West Escalator</option>
+      </select><br />
+      <button onclick="publishGoto()">Go</button>
+      <!-- <button onclick="publishGoto(true)">Go</button>
+      <button onclick="publishGoto(false)">Stop</button> -->
+    </div>
+
+    <div class="block">
+      <h3>Current Location : <span id="currentLocation">---</span></h3>
+      <button onclick="publishScan()">Scan/Stop</button><br />
+      <!-- <button onclick="publishScan(true)">Begin Scan</button>
+      <button onclick="publishScan(false)">Stop</button><br /> -->
+    </div>
+
+    <div class="block">
+      <h3>Robot State Information</h3>
+      <p>goto status: <span id="info_goto_status">---</span></p>
+      <p>location chosen: <span id="info_location_chosen">---</span></p>
+      <p>search status: <span id="info_search_status">---</span></p>
+      <!-- <p>return and place: <span id="info_return_and_place">---</span></p> -->
+      <p>yolo enabled [quadruped]: <span id="info_yolo_enabled_quadruped">---</span></p>
+      <p>yolo enabled [arm]: <span id="info_yolo_enabled_arm">---</span></p>
+      <p>tracked status: <span id="info_tracked_status">---</span></p>
+      <p>tracked center_x: <span id="info_tracked_center_x">---</span></p>
+      <p>tracked center_y: <span id="info_tracked_center_y">---</span></p>
+      <p>tracked depth: <span id="info_tracked_depth">---</span></p>
+      <!-- <p>cancel tracking: <span id="info_cancel_tracking">---</span></p> -->
+    </div>
+  </div>
+</body>
+</html>
